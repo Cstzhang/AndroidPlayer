@@ -38,14 +38,31 @@ bool FFDemux::Open(const char *url)
     }
     this->totalMs =  ic->duration/(AV_TIME_BASE/1000);//不一定有
     ZLOGI("total ms =  %d !",totalMs);
+
     return true;
 }
 
 //读取一帧数据，数据由调用者清理
 ZData FFDemux::Read()
 {
+    if(!ic)return ZData();
 
     ZData d;
+    AVPacket *pkt = av_packet_alloc();
+
+    //读取
+    int re = av_read_frame(ic,pkt);
+    if(re != 0)
+    {
+        av_packet_free(&pkt);//释放空间
+        return ZData();
+    }
+
+    ZLOGI("packet size=%d pts= %lld",pkt->size,pkt->pts);
+    d.data = (unsigned char*)pkt;
+    d.size = pkt->size;
+
+
     return  d;
 
 }

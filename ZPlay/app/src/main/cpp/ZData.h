@@ -6,7 +6,14 @@
 #define ZPLAY_ZDATA_H
 
 
-class ZData {
+struct ZData {
+    unsigned char *data = 0;
+    int size = 0;
+
+
+
+    //清理
+    void Drop();
 
 };
 

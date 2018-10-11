@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <string>
 #include "FFDemux.h"
+#include "ZLog.h"
 
 extern "C" JNIEXPORT jstring
 
@@ -11,5 +12,9 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
     std::string hello = "Hello from C++";
     IDemux *de = new FFDemux();
     de->Open("/sdcard/cat.mp4");
+    for (; ; ) {
+        ZData d = de->Read();
+        ZLOGI("read data size %d",d.size);
+    }
     return env->NewStringUTF(hello.c_str());
 }
