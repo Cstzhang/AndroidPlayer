@@ -1,0 +1,25 @@
+//
+// Created by bigfish on 2018/10/11.
+//
+
+#ifndef ZPLAY_IDEMUX_H
+#define ZPLAY_IDEMUX_H
+
+#include "ZData.h"
+//解封装接口
+class IDemux {
+
+public:
+    //打开文件或者流媒体 rtmp http rtsp
+    virtual bool Open(const char *url) = 0;  //纯虚函数
+
+    //读取一帧数据，数据由调用者清理
+    virtual ZData Read() = 0;
+
+    //总时长（毫秒）
+    int totalMs = 0;
+
+};
+
+
+#endif //ZPLAY_IDEMUX_H
