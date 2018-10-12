@@ -58,7 +58,7 @@ ZData FFDemux::Read()
         return ZData();
     }
 
-    ZLOGI("packet size=%d pts= %lld",pkt->size,pkt->pts);
+   // ZLOGI("packet size=%d pts= %lld",pkt->size,pkt->pts);
     d.data = (unsigned char*)pkt;
     d.size = pkt->size;
 

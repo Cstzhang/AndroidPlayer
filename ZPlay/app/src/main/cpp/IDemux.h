@@ -6,8 +6,10 @@
 #define ZPLAY_IDEMUX_H
 
 #include "ZData.h"
+#include "ZThread.h"
+
 //解封装接口
-class IDemux {
+class IDemux: public ZThread {
 
 public:
     //打开文件或者流媒体 rtmp http rtsp
@@ -18,6 +20,9 @@ public:
 
     //总时长（毫秒）
     int totalMs = 0;
+
+protected:
+    virtual void Main();
 
 };
 
