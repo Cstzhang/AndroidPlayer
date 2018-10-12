@@ -11,6 +11,9 @@ void IDemux::Main()
     while (!isExit)
     {
         ZData d = Read();
+        if (d.size > 0){
+            Notify(d);
+        }
       //  ZLOGI("IDemux Read %d",d.size);
         //if (d.size <=0) break;
     }

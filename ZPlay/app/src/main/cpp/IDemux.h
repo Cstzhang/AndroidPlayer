@@ -6,10 +6,11 @@
 #define ZPLAY_IDEMUX_H
 
 #include "ZData.h"
-#include "ZThread.h"
+#include "IObserver.h"
 
 //解封装接口
-class IDemux: public ZThread {
+class IDemux: public IObserver
+{
 
 public:
     //打开文件或者流媒体 rtmp http rtsp

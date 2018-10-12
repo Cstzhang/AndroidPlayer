@@ -11,7 +11,8 @@
 
 struct AVFormatContext;
 
-class FFDemux: public IDemux {
+class FFDemux: public IDemux
+{
 
 public:
     //打开文件或者流媒体 rtmp http rtsp
