@@ -2,6 +2,8 @@
 #include <string>
 #include "FFDemux.h"
 #include "ZLog.h"
+#include "IDecode.h"
+#include "FFDecode.h"
 
 
 class TestObs:public IObserver
@@ -9,7 +11,7 @@ class TestObs:public IObserver
 public:
     void Update(ZData d)
     {
-        ZLOGI("TestObs update data size is %d ",d.size);
+//        ZLOGI("TestObs update data size is %d ",d.size);
     }
 
 };
@@ -26,9 +28,14 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
     TestObs *tobs = new TestObs();
 
+
     IDemux *de = new FFDemux();
     de->AddObs(tobs);
-    de->Open("/sdcard/cat.mp4");
+    de->Open("/sdcard/test.mp4");
+
+    IDecode *vdecode = new FFDecode();
+    vdecode->Open(de->GetVPara());
+
     de->Start();
     ZSleep(3000);
     de->Stop();

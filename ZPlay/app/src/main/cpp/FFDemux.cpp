@@ -20,7 +20,7 @@ bool FFDemux::Open(const char *url)
     if (re != 0 )
     {
         char buf[1024] = {0};
-        av_strerror(re,buf, sizeof(buf));
+        av_strerror(re,buf,sizeof(buf));
         ZLOGE("FFDemux open %s failed!",url);
         return false;
     }
@@ -41,6 +41,29 @@ bool FFDemux::Open(const char *url)
 
     return true;
 }
+
+//读取视频参数
+ZParameter FFDemux::GetVPara()
+{
+    if (!ic)
+    {
+        ZLOGE("GetVPara  failed! ic is NULL!");
+        return ZParameter();
+    }
+    //获取视频流索引
+    int re =  av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO,-1,-1,0,0);
+    if (re < 0)
+    {
+        ZLOGE("av_find_best_stream failed!");
+        return ZParameter();
+    }
+    ZParameter para;
+    para.para = ic->streams[re]->codecpar;
+    return  para;
+}
+
+
+
 
 //读取一帧数据，数据由调用者清理
 ZData FFDemux::Read()
@@ -68,13 +91,12 @@ ZData FFDemux::Read()
 }
 
 //初始化
-
 FFDemux::FFDemux()
 {
     static bool isFirst = true;//非线程安全
     if (isFirst)
     {
-        isFirst = false;
+        isFirst = false;//初始化
         //注册所有封装器
         av_register_all();
         //注册所有解码器

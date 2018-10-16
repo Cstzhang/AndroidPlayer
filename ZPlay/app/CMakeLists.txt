@@ -23,6 +23,10 @@ add_library( # Sets the name of the library.
              src/main/cpp/ZLog.cpp
              src/main/cpp/ZThread.cpp
              src/main/cpp/IObserver.cpp
+             src/main/cpp/FFDecode.cpp
+             src/main/cpp/IDecode.cpp
+             src/main/cpp/ZParameter.cpp
+
              )
 
 set(distribution_DIR ${CMAKE_SOURCE_DIR}/../../../../libs)

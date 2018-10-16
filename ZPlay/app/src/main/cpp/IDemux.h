@@ -7,6 +7,7 @@
 
 #include "ZData.h"
 #include "IObserver.h"
+#include "ZParameter.h"
 
 //解封装接口
 class IDemux: public IObserver
@@ -15,6 +16,8 @@ class IDemux: public IObserver
 public:
     //打开文件或者流媒体 rtmp http rtsp
     virtual bool Open(const char *url) = 0;  //纯虚函数
+    //读取视频参数
+    virtual ZParameter GetVPara() = 0;
 
     //读取一帧数据，数据由调用者清理
     virtual ZData Read() = 0;
