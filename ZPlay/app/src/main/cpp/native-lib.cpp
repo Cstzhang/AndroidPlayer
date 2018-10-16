@@ -30,15 +30,24 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
 
     IDemux *de = new FFDemux();
-    de->AddObs(tobs);
+//    de->AddObs(tobs);
     de->Open("/sdcard/test.mp4");
 
     IDecode *vdecode = new FFDecode();
     vdecode->Open(de->GetVPara());
 
+    IDecode *adecode = new FFDecode();
+    adecode->Open(de->GetAPara());
+
+    de->AddObs(vdecode);//添加
+    de->AddObs(adecode);//添加
+
     de->Start();
-    ZSleep(3000);
-    de->Stop();
+    vdecode->Start();
+    adecode->Start();
+
+//    ZSleep(3000);
+//    de->Stop();
 //    for (; ; ) {
 //        ZData d = de->Read();
 //        ZLOGI("read data size %d",d.size);

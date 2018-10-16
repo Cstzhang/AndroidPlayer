@@ -39,6 +39,8 @@ bool FFDemux::Open(const char *url)
     this->totalMs =  ic->duration/(AV_TIME_BASE/1000);//不一定有
     ZLOGI("total ms =  %d !",totalMs);
 
+    GetVPara();
+    GetAPara();
     return true;
 }
 
@@ -57,11 +59,32 @@ ZParameter FFDemux::GetVPara()
         ZLOGE("av_find_best_stream failed!");
         return ZParameter();
     }
+    videoStream = re;
     ZParameter para;
     para.para = ic->streams[re]->codecpar;
+
     return  para;
 }
 
+ ZParameter FFDemux::GetAPara(){
+     if (!ic)
+     {
+         ZLOGE("GetVPara  failed! ic is NULL!");
+         return ZParameter();
+     }
+     //获取音频流索引
+     int re =  av_find_best_stream(ic,AVMEDIA_TYPE_AUDIO,-1,-1,0,0);
+     if (re < 0)
+     {
+         ZLOGE("av_find_best_stream failed!");
+         return ZParameter();
+     }
+     audioStream = re;
+     ZParameter para;
+     para.para = ic->streams[re]->codecpar;
+     return  para;
+
+ }
 
 
 
@@ -85,6 +108,19 @@ ZData FFDemux::Read()
     d.data = (unsigned char*)pkt;
     d.size = pkt->size;
 
+    if (pkt->stream_index == audioStream)
+    {
+        d.isAudio = true;
+    }
+    else if (pkt->stream_index == videoStream)
+    {
+        d.isAudio = false;
+    }
+    else
+    {
+        av_packet_free(&pkt);//释放空间
+        return ZData();
+    }
 
     return  d;
 

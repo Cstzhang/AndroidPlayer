@@ -19,6 +19,9 @@ public:
     virtual bool Open(const char *url);
     //读取视频参数
     virtual ZParameter GetVPara();
+    //读取音频参数
+    virtual ZParameter GetAPara();
+
     //读取一帧数据，数据由调用者清理
     virtual ZData Read();
     //构造函数
@@ -26,7 +29,8 @@ public:
 
 private:
     AVFormatContext *ic = 0; //初始值无参数构造函数才生效 c++11
-
+    int audioStream = 1;
+    int videoStream = 0;
 };
 
 

@@ -9,7 +9,7 @@
 struct ZData {
     unsigned char *data = 0;
     int size = 0;
-
+    bool isAudio = false;
     //清理
     void Drop();
 

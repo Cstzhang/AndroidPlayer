@@ -12,9 +12,9 @@ void IDemux::Main()
     {
         ZData d = Read();
         if (d.size > 0){
-            Notify(d);
+            Notify(d); //没有人接收的时候要进行处理
         }
-      //  ZLOGI("IDemux Read %d",d.size);
+        //ZLOGI("IDemux Read %d",d.size);
         //if (d.size <=0) break;
     }
 
