@@ -4,6 +4,8 @@
 #include "ZLog.h"
 #include "IDecode.h"
 #include "FFDecode.h"
+#include "ZEGL.h"
+#include <android/native_window_jni.h>
 
 
 class TestObs:public IObserver
@@ -55,4 +57,14 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
 
     return env->NewStringUTF(hello.c_str());
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
+
+    // TODO
+    ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
+    ZEGL::Get()->Init(win);
+
+
 }

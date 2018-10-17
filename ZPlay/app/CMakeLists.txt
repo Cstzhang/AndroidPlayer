@@ -26,6 +26,11 @@ add_library( # Sets the name of the library.
              src/main/cpp/FFDecode.cpp
              src/main/cpp/IDecode.cpp
              src/main/cpp/ZParameter.cpp
+             src/main/cpp/IVideoView.cpp
+             src/main/cpp/GLVideoView.cpp
+             src/main/cpp/ZTexture.cpp
+             src/main/cpp/ZShader.cpp
+             src/main/cpp/ZEGL.cpp
 
              )
 
