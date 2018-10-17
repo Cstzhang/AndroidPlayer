@@ -28,9 +28,9 @@ public:
     }
     virtual void Draw(unsigned char *data[],int width,int height)
     {
-        sh.GetTexture(0,width,height,data[0]);     // y
-        sh.GetTexture(1,width/2,height/2,data[1]); // u
-        sh.GetTexture(2,width/2,height/2,data[2]); // v
+        sh.GetTexture(0,width,height,data[0]);      // Y
+        sh.GetTexture(1,width/2,height/2,data[1]);  // U
+        sh.GetTexture(2,width/2,height/2,data[2]);  // V
         sh.Draw();//显示
         ZEGL::Get()->Draw();
 

@@ -38,7 +38,7 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
     IDemux *de = new FFDemux();
 //    de->AddObs(tobs);
-    de->Open("/sdcard/test.mp4");
+    de->Open("/sdcard/1080.mp4");
 
     IDecode *vdecode = new FFDecode();
     vdecode->Open(de->GetVPara());
