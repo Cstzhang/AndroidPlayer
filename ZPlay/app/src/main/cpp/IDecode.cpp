@@ -57,7 +57,7 @@ void IDecode::Main()
                 //获取解码数据
                 ZData frame = RecvFrame();
                 if (!frame.data) break;
-                ZLOGE("RecvFrame %d",frame.size);
+//                ZLOGI("RecvFrame %d",frame.size);
                 //发送数据给观察者
                 this->Notify(frame);
             }

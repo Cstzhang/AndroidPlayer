@@ -6,8 +6,15 @@
 #define ZPLAY_ZSHADER_H
 
 
-class ZShader {
+class ZShader
+{
+public:
+    //初始化
+    virtual bool Init();
 
+    unsigned int vsh = 0;
+    unsigned int fsh = 0;
+    unsigned int program = 0;
 };
 
 

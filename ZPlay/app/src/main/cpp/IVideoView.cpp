@@ -3,3 +3,9 @@
 //
 
 #include "IVideoView.h"
+
+
+void IVideoView::Update(ZData data)
+{
+    this->Render(data);
+}

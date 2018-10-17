@@ -5,6 +5,7 @@
 #include "IDecode.h"
 #include "FFDecode.h"
 #include "ZEGL.h"
+#include "ZShader.h"
 #include <android/native_window_jni.h>
 
 
@@ -65,6 +66,7 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
     // TODO
     ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
     ZEGL::Get()->Init(win);
-
+    ZShader shader;
+    shader.Init();
 
 }

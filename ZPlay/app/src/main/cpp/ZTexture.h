@@ -6,7 +6,14 @@
 #define ZPLAY_ZTEXTURE_H
 
 
-class ZTexture {
+class ZTexture
+{
+public:
+    static ZTexture *Create();
+
+    virtual bool Init(void *win) = 0;
+
+
 
 };
 

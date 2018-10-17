@@ -15,6 +15,7 @@ public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback {
    {
        //初始化opengl egl显示
        InitView(holder.getSurface());
+
    }
 
     @Override

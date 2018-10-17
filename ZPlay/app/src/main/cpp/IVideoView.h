@@ -6,7 +6,16 @@
 #define ZPLAY_IVIDEOVIEW_H
 
 
-class IVideoView {
+#include "ZData.h"
+
+class IVideoView
+{
+public:
+    //设置显示窗口
+    virtual void SetRender(void *win) = 0;
+    virtual void Render(ZData data) = 0;
+    virtual void Update(ZData data);
+
 
 };
 
