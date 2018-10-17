@@ -7,8 +7,9 @@
 
 
 #include "ZData.h"
+#include "IObserver.h"
 
-class IVideoView
+class IVideoView:public IObserver
 {
 public:
     //设置显示窗口

@@ -13,6 +13,17 @@ public:
     EGLDisplay display = EGL_NO_DISPLAY; //用于检测设备是否打开正常
     EGLSurface surface = EGL_NO_SURFACE;
     EGLContext context = EGL_NO_CONTEXT;
+    virtual void Draw()
+    {
+        if(display == EGL_NO_DISPLAY || surface == EGL_NO_SURFACE)
+        {
+            return;
+        }
+
+        eglSwapBuffers(display,surface);
+
+    }
+
     virtual bool Init(void *win)
     {
         ANativeWindow *nwin = (ANativeWindow *)win;

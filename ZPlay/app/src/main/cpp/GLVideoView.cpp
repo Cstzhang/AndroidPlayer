@@ -18,8 +18,7 @@ void  GLVideoView::Render(ZData data)
         txt  = ZTexture::Create();
         txt->Init(view);
     }
-
-
+    txt->Draw(data.datas,data.width,data.height);
 
 
 }

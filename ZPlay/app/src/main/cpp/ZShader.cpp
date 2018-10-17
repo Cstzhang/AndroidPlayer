@@ -44,7 +44,6 @@ static const char *fragYUV420P = GET_STR(
 
 );
 
-
 //初始化着色器
 static GLuint InitShader(const char *code,GLint type)
 {
@@ -119,6 +118,7 @@ bool ZShader::Init()
     glUseProgram(program);
     ZLOGI("glLinkProgram success!");
     //////////////////////////////////////////////////////////
+
     //加入三维顶点数据 两个三角形组成正方形
     static float vers[] = {
             1.0f,-1.0f,0.0f,
@@ -162,5 +162,75 @@ bool ZShader::Init()
     ZLOGI("初始化ZShader success!");
 
     return true;
+
+}
+
+void ZShader::Draw()
+{
+    if(!program)
+        return;
+
+    //三维绘制
+    glDrawArrays(GL_TRIANGLE_STRIP,0,4);//从0顶点开始 一共4个顶点
+}
+void ZShader::GetTexture(unsigned int index, int width, int height, unsigned char *buf)
+{
+    if(texts[index] == 0)
+    {
+        //材质初始化
+        //创建1个纹理
+        glGenTextures(1,&texts[index]);
+        //设置纹理属性
+        glBindTexture(GL_TEXTURE_2D,texts[index]);//绑定纹理，下面的属性针对这个纹理设置
+        /*
+         * GL_TEXTURE_2D 2D材质
+         * GL_TEXTURE_MIN_FILTER 缩小的过滤
+         * GL_LINEAR 线性差值 当前渲染像素最近的4个纹理做加权平均值
+         *
+         * */
+        //缩小放大过滤器
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        //设置纹理的格式和大小
+        /*
+         * GL_TEXTURE_2D
+         * 显示细节的级别
+         * 内部gpu 格式 亮度 灰度图
+         * 宽
+         * 高
+         * 边框
+         * 数据的像素格式
+         * 像素的数据类型
+         * 纹理数据
+         * */
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,//默认
+                     GL_LUMINANCE,
+                     width, height, //尺寸要是2的次方  拉升到全屏
+                     0,
+                     GL_LUMINANCE,//数据的像素格式，要与上面一致
+                     GL_UNSIGNED_BYTE,// 像素的数据类型
+                     NULL
+        );
+    }
+
+    //激活纹理 绑定到创建的opengl纹理
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D,texts[index]);//绑定纹理
+    //替换纹理内容
+    /*
+     * GL_TEXTURE_2D
+     * 细节级别
+     * 偏移位置yoffset
+     * 偏移位置xoffset
+     * 宽
+     * 高
+     * 数据格式
+     * 存储搁置
+     * 纹理数据写入buf中
+     *
+     * */
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,width,height,GL_LUMINANCE,GL_UNSIGNED_BYTE,buf);
+
 
 }

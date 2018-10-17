@@ -6,6 +6,8 @@
 #include "FFDecode.h"
 #include "ZEGL.h"
 #include "ZShader.h"
+#include "IVideoView.h"
+#include "GLVideoView.h"
 #include <android/native_window_jni.h>
 
 
@@ -19,6 +21,8 @@ public:
 
 };
 
+
+IVideoView *view = NULL;
 
 
 extern "C" JNIEXPORT jstring
@@ -45,6 +49,9 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
     de->AddObs(vdecode);//添加
     de->AddObs(adecode);//添加
 
+    view = new GLVideoView();
+    vdecode->AddObs(view);
+
     de->Start();
     vdecode->Start();
     adecode->Start();
@@ -65,8 +72,13 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
 
     // TODO
     ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
-    ZEGL::Get()->Init(win);
-    ZShader shader;
-    shader.Init();
+    view->SetRender(win);
+
+    //ZEGL::Get()->Init(win);
+    //ZShader shader;
+    //shader.Init();
+
+
+
 
 }

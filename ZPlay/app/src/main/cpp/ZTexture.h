@@ -13,7 +13,7 @@ public:
 
     virtual bool Init(void *win) = 0;
 
-
+    virtual void Draw(unsigned char *data[],int width,int height) = 0;
 
 };
 

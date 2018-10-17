@@ -10,7 +10,9 @@ class ZEGL
 {
 public:
     virtual bool Init(void *win) = 0;
+    virtual void Draw() = 0;
     static ZEGL *Get();
+
 
 protected:
     ZEGL(){}

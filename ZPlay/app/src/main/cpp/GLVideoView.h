@@ -6,10 +6,12 @@
 #define ZPLAY_GLVIDEOVIEW_H
 
 #include "ZData.h"
+#include "IVideoView.h"
+
 class ZTexture;
 
 
-class GLVideoView
+class GLVideoView:public IVideoView
 {
 public:
     virtual void SetRender(void *win);
