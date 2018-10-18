@@ -30,7 +30,7 @@ ZData IAudioPlay::GetData()
 
 void IAudioPlay::Update(ZData data)
 {
-    ZLOGI("IAudioPlay::Update %d",data.size);
+   // ZLOGI("IAudioPlay::Update %d",data.size);
     //压入缓冲队列
     if(data.size <= 0 || !data.data)return;
     while(!isExit)

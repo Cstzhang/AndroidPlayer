@@ -23,9 +23,51 @@ public:
     }
 
 };
-
-
 IVideoView *view = NULL;
+extern "C"
+JNIEXPORT
+jint JNI_OnLoad(JavaVM *vm ,void *res)
+{
+    FFDecode::InitHard(vm);
+
+    ///////////////////////////////////
+    ///测试用代码
+    TestObs *tobs = new TestObs();
+    IDemux *de = new FFDemux();
+    //de->AddObs(tobs);
+    de->Open("/sdcard/1080.mp4");
+
+    IDecode *vdecode = new FFDecode();
+    //vdecode->Open(de->GetVPara(), true);
+    vdecode->Open(de->GetVPara(), false);
+
+    IDecode *adecode = new FFDecode();
+    adecode->Open(de->GetAPara());
+    de->AddObs(vdecode);
+    de->AddObs(adecode);
+
+    view = new GLVideoView();
+    vdecode->AddObs(view);
+
+    IResample *resample = new FFResample();
+    ZParameter outPara = de->GetAPara();
+
+    resample->Open(de->GetAPara(),outPara);
+    adecode->AddObs(resample);
+
+    IAudioPlay *audioPlay = new SLAudioPlay();
+    audioPlay->StartPlay(outPara);
+    resample->AddObs(audioPlay);
+
+
+    //vdecode->Open();
+    de->Start();
+    vdecode->Start();
+    adecode->Start();
+
+
+    return JNI_VERSION_1_4;
+}
 
 
 extern "C" JNIEXPORT jstring
@@ -36,44 +78,9 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
         jobject /* this */) {
     std::string hello = "Hello from C++";
 
-    TestObs *tobs = new TestObs();
 
 
-    IDemux *de = new FFDemux();
-//    de->AddObs(tobs);
-    de->Open("/sdcard/1080.mp4");
 
-    IDecode *vdecode = new FFDecode();
-    vdecode->Open(de->GetVPara());
-
-    IDecode *adecode = new FFDecode();
-    adecode->Open(de->GetAPara());
-
-    de->AddObs(vdecode);
-    de->AddObs(adecode);
-
-    view = new GLVideoView();
-    vdecode->AddObs(view);
-
-
-    IResample *resample = new FFResample();
-    ZParameter outPara  = de->GetAPara();
-    resample->Open(de->GetAPara(),outPara);
-    adecode->AddObs(resample);
-    IAudioPlay *audioPlay = new SLAudioPlay();
-    audioPlay->StartPlay(outPara);
-    resample->AddObs(audioPlay);
-
-    de->Start();
-    vdecode->Start();
-    adecode->Start();
-
-//    ZSleep(3000);
-//    de->Stop();
-//    for (; ; ) {
-//        ZData d = de->Read();
-//        ZLOGI("read data size %d",d.size);
-//    }
 
 
     return env->NewStringUTF(hello.c_str());
@@ -86,9 +93,6 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
     ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
     view->SetRender(win);
 
-    //ZEGL::Get()->Init(win);
-    //ZShader shader;
-    //shader.Init();
 
 
 

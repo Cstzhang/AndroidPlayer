@@ -16,7 +16,7 @@ class IDecode:public IObserver
 {
 public:
     //打开解码器
-    virtual bool Open(ZParameter para) = 0;
+    virtual bool Open(ZParameter para, bool isHard= false) = 0;
 
     //future模型 多线程并发处理 发送数据到线程解码
     virtual bool SendPacket(ZData pkt) = 0;//立刻返回

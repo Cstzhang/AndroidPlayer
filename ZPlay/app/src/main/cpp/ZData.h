@@ -21,6 +21,7 @@ struct ZData
     bool isAudio = false;
     int width = 0;
     int height = 0;
+    int format = 0;
     //分配空间
     bool Alloc(int size, const char *d=0);
     //清理

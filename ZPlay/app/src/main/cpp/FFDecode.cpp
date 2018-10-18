@@ -5,7 +5,7 @@ extern "C"
 {
 
 #include <libavcodec/avcodec.h>
-
+#include <libavcodec/jni.h>
 }
 
 
@@ -13,63 +13,70 @@ extern "C"
 #include "FFDecode.h"
 #include "ZLog.h"
 
-bool FFDecode::Open(ZParameter para)
+
+void FFDecode::InitHard(void *vm)
+{
+    av_jni_set_java_vm(vm,0);
+}
+
+bool FFDecode::Open(ZParameter para , bool isHard)
 {
     if(!para.para) return false;
-
     AVCodecParameters *p = para.para;
-
     //1 查找解码器
     AVCodec *cd = avcodec_find_decoder(p->codec_id);
-    if (!cd)
+    ZLOGI("============= isHard: %d ================= ",isHard);
+    if(isHard)
     {
-        ZLOGE("avcodec_find_encoder %d failed!",p->codec_id);
-        return  false;
+        ZLOGI("============= Hard  ================= ");
+        cd = avcodec_find_decoder_by_name("h264_mediacodec");
     }
-    ZLOGI("avcodec_find_encoder success!");
 
-    //2 创建解码上下文，并复制参数
-    codec = avcodec_alloc_context3(cd);//创建
-    avcodec_parameters_to_context(codec,p);//复制参数
-    codec->thread_count = 8;//多线程解码
-
-    //3 打开解码器
-    int re = avcodec_open2(codec,0,0);
-    if (re != 0)
+    if(!cd)
     {
-        char buf[1024] = {0};
-        av_strerror(re,buf, sizeof(buf)-1);
-        ZLOGE("avcodec_open2 failed !%s %d",buf,re);
+        ZLOGE("avcodec_find_decoder %d failed!  %d",p->codec_id,isHard);
         return false;
     }
-    ZLOGI("avcodec_open2 success!");
+    ZLOGI("avcodec_find_decoder success %d!",isHard);
+    //2 创建解码上下文，并复制参数
+    codec = avcodec_alloc_context3(cd);
+    avcodec_parameters_to_context(codec,p);
+
+    codec->thread_count = 8;
+    //3 打开解码器
+    int re = avcodec_open2(codec,0,0);
+    if(re != 0)
+    {
+        char buf[1024] = {0};
+        av_strerror(re,buf,sizeof(buf)-1);
+        ZLOGE("%s",buf);
+        return false;
+    }
 
     if(codec->codec_type == AVMEDIA_TYPE_VIDEO)
     {
         this->isAudio = false;
-
     }
     else
-    {  //有字幕解码的时候不能这么写
-        this->isAudio = this;
+    {
+        this->isAudio = true;
     }
 
+    ZLOGI("avcodec_open2 success!");
     return true;
 }
 
 
 bool FFDecode::SendPacket(ZData pkt)
 {
-    if ( pkt.size <=0 || !pkt.data) return false;
-    if (!codec)
+    if(pkt.size<=0 || !pkt.data)return false;
+    if(!codec)
     {
-        ZLOGE("codec 失效 ");
         return false;
     }
     int re = avcodec_send_packet(codec,(AVPacket*)pkt.data);
-    if (re != 0)
+    if(re != 0)
     {
-        ZLOGE("avcodec_send_packet failed ");
         return false;
     }
 
@@ -80,37 +87,36 @@ bool FFDecode::SendPacket(ZData pkt)
 ZData FFDecode::RecvFrame()
 {
 
-    if (!codec)
+    if(!codec)
     {
-        ZLOGE("codec 失效 ");
         return ZData();
     }
     if(!frame)
     {
         frame = av_frame_alloc();
     }
-
     int re = avcodec_receive_frame(codec,frame);
     if(re != 0)
     {
-        return  ZData();
+        return ZData();
     }
     ZData d;
     d.data = (unsigned char *)frame;
     if(codec->codec_type == AVMEDIA_TYPE_VIDEO)
     {
-        d.size   = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;
-        d.width  = frame->width;
+        d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2])*frame->height;
+        d.width = frame->width;
         d.height = frame->height;
-
     }
     else
     {
         //样本字节数 * 单通道样本数 * 通道数
-        d.size = av_get_bytes_per_sample((AVSampleFormat)frame->format) * frame->nb_samples *2;
+        d.size = av_get_bytes_per_sample((AVSampleFormat)frame->format)*frame->nb_samples*2;
     }
-    //复制数据
-    memcpy(d.datas,frame->data, sizeof(d.datas));
+    d.format = frame->format;
+    //if(!isAudio)
+    //    XLOGE("data format is %d",frame->format);
+    memcpy(d.datas,frame->data,sizeof(d.datas));
 
     return d;
 }
