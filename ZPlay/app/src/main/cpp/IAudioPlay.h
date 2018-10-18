@@ -13,6 +13,8 @@ class IAudioPlay: public IObserver
 public:
     //接收重采样数据 缓冲满后阻塞
     virtual void Update(ZData data);
+    //获取缓冲数据，如果没有则阻塞
+    virtual ZData GetData();
     virtual bool StartPlay(ZParameter out) = 0;
     //最大缓冲
     int maxFrame = 100; //100帧

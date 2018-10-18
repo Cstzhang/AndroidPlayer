@@ -5,6 +5,29 @@
 #include "IAudioPlay.h"
 #include "ZLog.h"
 
+ZData IAudioPlay::GetData()
+{
+    ZData d;
+    while(!isExit)
+    {
+        framesMutes.lock();
+        if(!frames.empty())
+        {
+            d = frames.front();
+            frames.pop_front();
+            framesMutes.unlock();
+            return  d;
+        }
+
+        framesMutes.unlock();
+        ZSleep(1);
+    }
+
+    return d;
+}
+
+
+
 void IAudioPlay::Update(ZData data)
 {
     ZLOGI("IAudioPlay::Update %d",data.size);
@@ -23,8 +46,6 @@ void IAudioPlay::Update(ZData data)
         framesMutes.unlock();
         break;
     }
-
-
 
 
 }
