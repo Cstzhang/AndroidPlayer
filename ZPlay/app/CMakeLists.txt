@@ -33,6 +33,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/ZEGL.cpp
              src/main/cpp/FFResample.cpp
              src/main/cpp/IResample.cpp
+             src/main/cpp/IAudioPlay.cpp
+             src/main/cpp/SLAudioPlay.cpp
 
              )
 

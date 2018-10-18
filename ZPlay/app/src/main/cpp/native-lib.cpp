@@ -9,6 +9,8 @@
 #include "IVideoView.h"
 #include "GLVideoView.h"
 #include "FFResample.h"
+#include "IAudioPlay.h"
+#include "SLAudioPlay.h"
 #include <android/native_window_jni.h>
 
 
@@ -55,8 +57,12 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
 
     IResample *resample = new FFResample();
-    resample->Open(de->GetAPara());
+    ZParameter outPara  = de->GetAPara();
+    resample->Open(de->GetAPara(),outPara);
     adecode->AddObs(resample);
+    IAudioPlay *audioPlay = new SLAudioPlay();
+    audioPlay->StartPlay(outPara);
+    resample->AddObs(audioPlay);
 
     de->Start();
     vdecode->Start();

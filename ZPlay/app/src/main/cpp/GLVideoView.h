@@ -21,7 +21,6 @@ protected:
     //显示窗体
     void *view = 0;
     ZTexture *txt = 0;
-
 };
 
 
