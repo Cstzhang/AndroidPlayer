@@ -31,6 +31,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/ZTexture.cpp
              src/main/cpp/ZShader.cpp
              src/main/cpp/ZEGL.cpp
+             src/main/cpp/FFResample.cpp
+             src/main/cpp/IResample.cpp
 
              )
 

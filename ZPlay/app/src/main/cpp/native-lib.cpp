@@ -8,6 +8,7 @@
 #include "ZShader.h"
 #include "IVideoView.h"
 #include "GLVideoView.h"
+#include "FFResample.h"
 #include <android/native_window_jni.h>
 
 
@@ -46,11 +47,16 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
     IDecode *adecode = new FFDecode();
     adecode->Open(de->GetAPara());
 
-    de->AddObs(vdecode);//添加
-    de->AddObs(adecode);//添加
+    de->AddObs(vdecode);
+    de->AddObs(adecode);
 
     view = new GLVideoView();
     vdecode->AddObs(view);
+
+
+    IResample *resample = new FFResample();
+    resample->Open(de->GetAPara());
+    adecode->AddObs(resample);
 
     de->Start();
     vdecode->Start();
