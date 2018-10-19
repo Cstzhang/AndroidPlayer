@@ -30,9 +30,9 @@ void ZThread::ThreadMain()
 {
 
     isRunning = true;
-    ZLOGI("线程函数进入");
+//    ZLOGI("线程函数进入");
     Main();
-    ZLOGI("线程函数退出");
+//    ZLOGI("线程函数退出");
     isRunning = false;
 }
 

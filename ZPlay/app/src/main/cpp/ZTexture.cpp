@@ -32,11 +32,13 @@ public:
 
         if(type == ZTEXTURE_YUV420P)
         {
+            ZLOGI("===== ZTEXTURE_YUV420P ======");
             sh.GetTexture(1,width/2,height/2,data[1]);  // U
             sh.GetTexture(2,width/2,height/2,data[2]);  // V
         }
         else
         {
+            ZLOGI("===== ZTEXTURE_nv12 ======");
             sh.GetTexture(1,width/2,height/2,data[1], true);  // UV
         }
         sh.Draw();

@@ -39,7 +39,7 @@ jint JNI_OnLoad(JavaVM *vm ,void *res)
 
     IDecode *vdecode = new FFDecode();
     //vdecode->Open(de->GetVPara(), true);
-    vdecode->Open(de->GetVPara(), false);
+    vdecode->Open(de->GetVPara(), true);
 
     IDecode *adecode = new FFDecode();
     adecode->Open(de->GetAPara());
@@ -77,11 +77,6 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
-
-
-
-
-
 
     return env->NewStringUTF(hello.c_str());
 }
