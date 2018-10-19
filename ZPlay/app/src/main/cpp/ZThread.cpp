@@ -15,7 +15,7 @@ void ZSleep(int mis)
 
 
 //启动线程
-void ZThread::Start()
+bool ZThread::Start()
 {
 
     isExit = false;
@@ -23,6 +23,8 @@ void ZThread::Start()
     thread th(&ZThread::ThreadMain,this);
 
     th.detach();//放弃对线程的控制
+
+    return true;
 
 }
 

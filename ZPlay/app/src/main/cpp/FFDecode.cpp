@@ -102,14 +102,14 @@ ZData FFDecode::RecvFrame()
     d.data = (unsigned char *)frame;
     if(codec->codec_type == AVMEDIA_TYPE_VIDEO)
     {
-        ZLOGI("===== AVMEDIA_TYPE_VIDEO ======");
+//        ZLOGI("===== AVMEDIA_TYPE_VIDEO ======");
         d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2])*frame->height;
         d.width = frame->width;
         d.height = frame->height;
     }
     else
     {
-        ZLOGI("===== AVMEDIA_TYPE_AUDIO ======");
+//        ZLOGI("===== AVMEDIA_TYPE_AUDIO ======");
         //样本字节数 * 单通道样本数 * 通道数
         d.size = av_get_bytes_per_sample((AVSampleFormat)frame->format)*frame->nb_samples*2;
     }

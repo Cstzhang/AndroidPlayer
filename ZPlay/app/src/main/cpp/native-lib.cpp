@@ -12,17 +12,9 @@
 #include "IAudioPlay.h"
 #include "SLAudioPlay.h"
 #include <android/native_window_jni.h>
+#include "IPlayer.h"
 
 
-class TestObs:public IObserver
-{
-public:
-    void Update(ZData d)
-    {
-//        ZLOGI("TestObs update data size is %d ",d.size);
-    }
-
-};
 IVideoView *view = NULL;
 extern "C"
 JNIEXPORT
@@ -32,17 +24,18 @@ jint JNI_OnLoad(JavaVM *vm ,void *res)
 
     ///////////////////////////////////
     ///测试用代码
-    TestObs *tobs = new TestObs();
+
     IDemux *de = new FFDemux();
     //de->AddObs(tobs);
-    de->Open("/sdcard/1080.mp4");
+//    de->Open("/sdcard/1080.mp4");
+
 
     IDecode *vdecode = new FFDecode();
     //vdecode->Open(de->GetVPara(), true);
-    vdecode->Open(de->GetVPara(), true);
+//    vdecode->Open(de->GetVPara(), false);
 
     IDecode *adecode = new FFDecode();
-    adecode->Open(de->GetAPara());
+//    adecode->Open(de->GetAPara());
     de->AddObs(vdecode);
     de->AddObs(adecode);
 
@@ -50,20 +43,29 @@ jint JNI_OnLoad(JavaVM *vm ,void *res)
     vdecode->AddObs(view);
 
     IResample *resample = new FFResample();
-    ZParameter outPara = de->GetAPara();
+//    ZParameter outPara = de->GetAPara();
 
-    resample->Open(de->GetAPara(),outPara);
+//    resample->Open(de->GetAPara(),outPara);
     adecode->AddObs(resample);
 
     IAudioPlay *audioPlay = new SLAudioPlay();
-    audioPlay->StartPlay(outPara);
+
+//    audioPlay->StartPlay(outPara);
     resample->AddObs(audioPlay);
+
+    IPlayer::Get()->demux = de;
+    IPlayer::Get()->adecode = adecode;
+    IPlayer::Get()->vdecode = vdecode;
+    IPlayer::Get()->resample = resample;
+    IPlayer::Get()->audioPlay = audioPlay;
+    IPlayer::Get()->videoView = view;
+    IPlayer::Get()->Open("/sdcard/1080.mp4");
 
 
     //vdecode->Open();
-    de->Start();
-    vdecode->Start();
-    adecode->Start();
+//    de->Start();
+//    vdecode->Start();
+//    adecode->Start();
 
 
     return JNI_VERSION_1_4;

@@ -136,11 +136,11 @@ FFDemux::FFDemux()
     {
         isFirst = false;//初始化
         //注册所有封装器
-        av_register_all();
+//        av_register_all();
         //注册所有解码器
-        avcodec_register_all();
+//        avcodec_register_all();
         //初始化网络
-        avformat_network_init();
+//        avformat_network_init();
 
         ZLOGI("register FFmpeg ");
 
