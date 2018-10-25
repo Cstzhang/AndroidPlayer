@@ -115,7 +115,7 @@ ZData FFDecode::RecvFrame()
     }
     d.format = frame->format;
     if(!isAudio)
-        ZLOGE("data format is %d",frame->format);
+       // ZLOGE("data format is %d",frame->format);
     memcpy(d.datas,frame->data,sizeof(d.datas));
 
     return d;

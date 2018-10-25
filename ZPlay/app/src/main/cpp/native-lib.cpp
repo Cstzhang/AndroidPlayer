@@ -56,11 +56,14 @@ jint JNI_OnLoad(JavaVM *vm ,void *res)
     IPlayer::Get()->demux = de;
     IPlayer::Get()->adecode = adecode;
     IPlayer::Get()->vdecode = vdecode;
+    IPlayer::Get()->videoView = view;
     IPlayer::Get()->resample = resample;
     IPlayer::Get()->audioPlay = audioPlay;
-    IPlayer::Get()->videoView = view;
-    IPlayer::Get()->Open("/sdcard/1080.mp4");
 
+
+
+    IPlayer::Get()->Open("/sdcard/1080.mp4");
+    IPlayer::Get()->Start();
 
     //vdecode->Open();
 //    de->Start();
@@ -80,6 +83,7 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
         jobject /* this */) {
     std::string hello = "Hello from C++";
 
+
     return env->NewStringUTF(hello.c_str());
 }
 extern "C"
@@ -88,9 +92,8 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
 
     // TODO
     ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
-    view->SetRender(win);
-
-
+    IPlayer::Get()->InitView(win);
+//    view->SetRender(win);
 
 
 
