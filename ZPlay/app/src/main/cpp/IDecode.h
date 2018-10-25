@@ -15,6 +15,8 @@
 class IDecode:public IObserver
 {
 public:
+
+
     //打开解码器
     virtual bool Open(ZParameter para, bool isHard= false) = 0;
 

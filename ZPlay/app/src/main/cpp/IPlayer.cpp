@@ -82,6 +82,8 @@ void IPlayer::InitView(void *win)
 
 }
 
+
+
 IPlayer::IPlayer()
 {
 
