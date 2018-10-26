@@ -40,6 +40,19 @@ void IDecode::Main()
     {
 
         packsMutex.lock();
+        //判断音视频同步
+        if(!isAudio && synPts > 0)
+        {
+            if (synPts < pts)//音频的时间小于视频的时间 表示音频放的慢一些，视频停下来等音频
+            {
+                packsMutex.unlock();
+                ZSleep(1);
+                continue;
+
+            }
+        }
+
+
         if (packs.empty())
         {
             packsMutex.unlock();
@@ -57,7 +70,7 @@ void IDecode::Main()
                 //获取解码数据
                 ZData frame = RecvFrame();
                 if (!frame.data) break;
-//                ZLOGI("RecvFrame %d",frame.size);
+                pts = frame.pts;
                 //发送数据给观察者
                 this->Notify(frame);
             }
@@ -65,8 +78,6 @@ void IDecode::Main()
         }
 
         pack.Drop();//清理数据
-
-
         packsMutex.unlock();
 
 

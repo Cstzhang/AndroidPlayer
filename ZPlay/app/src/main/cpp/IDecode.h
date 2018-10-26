@@ -34,6 +34,11 @@ public:
     //最大队列缓冲
     int maxList  = 100; //100帧
 
+    //同步时间,再次打开文件要清理
+    int synPts = 0;
+    //当前已解码位置
+    int pts = 0;
+
 protected:
     virtual void Main();//线程入口函数
 

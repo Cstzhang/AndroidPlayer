@@ -59,6 +59,7 @@ ZData FFResample::Resample(ZData indata)
         out.Drop();
         return ZData();
     }
+    out.pts = indata.pts;
 //    ZLOGE("swr_convert success = %d",len);
     return out;
 }

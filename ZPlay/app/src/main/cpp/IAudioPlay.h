@@ -18,6 +18,7 @@ public:
     virtual bool StartPlay(ZParameter out) = 0;
     //最大缓冲
     int maxFrame = 100; //100帧
+    int pts = 0;
 protected:
     std::list<ZData> frames;//音频队列
     std::mutex framesMutes;
