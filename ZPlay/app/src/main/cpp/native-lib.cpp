@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <string>
 #include <android/native_window_jni.h>
-#include "FFPlayerBuilder.h"
+//#include "FFPlayerBuilder.h"
 
 //#include "FFDemux.h"
 //#include "ZLog.h"
@@ -17,24 +17,33 @@
 //
 //#include "IPlayer.h"
 
+#include "IPlayerProxy.h"
 
-static IPlayer *player = NULL;
+
+
 //IVideoView *view = NULL;
 extern "C"
 JNIEXPORT
 jint JNI_OnLoad(JavaVM *vm ,void *res)
 {
-    //FFDecode::InitHard(vm);
-    FFPlayerBuilder::InitHard(vm);
-    ///////////////////////////////////
-    ///测试用代码
-    player =  FFPlayerBuilder::Get()->BuilderPlayer();
 
-    player->Open("/sdcard/1080.mp4");
-    player->Start();
+    IPlayerProxy::Get()->Init(vm);
+    IPlayerProxy::Get()->Open("/sdcard/1080.mp4");
+    IPlayerProxy::Get()->Start();
 
 
     return JNI_VERSION_1_4;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
+
+    // TODO
+    ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
+
+    IPlayerProxy::Get()->InitView(win);
+
 }
 
 
@@ -48,19 +57,4 @@ Java_zplay_zplay_MainActivity_stringFromJNI(
 
 
     return env->NewStringUTF(hello.c_str());
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
-
-    // TODO
-    ANativeWindow *win = ANativeWindow_fromSurface(env,surface);//获取到窗口对象
-    if (player)
-    {
-        player->InitView(win);
-    }
-
-
-
-
 }
