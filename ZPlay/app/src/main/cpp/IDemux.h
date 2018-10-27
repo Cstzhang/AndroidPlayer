@@ -21,6 +21,8 @@ public:
     //读取音频参数
     virtual ZParameter GetAPara() = 0;
 
+    virtual void Close() = 0;
+
     //读取一帧数据，数据由调用者清理
     virtual ZData Read() = 0;
 

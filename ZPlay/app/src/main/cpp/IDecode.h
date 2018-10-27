@@ -29,6 +29,8 @@ public:
     //由主体notify的数据 阻塞的
     virtual void Update(ZData pkt);
 
+    virtual void Close() = 0;
+
     bool isAudio = false;
 
     //最大队列缓冲
