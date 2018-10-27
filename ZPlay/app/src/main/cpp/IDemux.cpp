@@ -14,8 +14,6 @@ void IDemux::Main()
         if (d.size > 0){
             Notify(d); //没有人接收的时候要进行处理
         }
-        //ZLOGI("IDemux Read %d",d.size);
-        //if (d.size <=0) break;
     }
 
 }

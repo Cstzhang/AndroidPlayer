@@ -16,14 +16,27 @@ static  double  r2d(AVRational r)
     return r.num == 0 || r.den == 0 ? 0.:(double)r.num/(double)r.den;
 }
 
+
+void FFDemux::Close()
+{
+    mux.lock();
+    if(ic)
+    {
+        avformat_close_input(&ic);
+    }
+    mux.unlock();
+}
 //打开文件或者流媒体 rtmp http rtsp
 bool FFDemux::Open(const char *url)
 {
     ZLOGI("Open file %s begin",url);
+    Close();
+    mux.lock();
     //打开文件
     int re = avformat_open_input(&ic,url,0,0);
     if (re != 0 )
     {
+        mux.unlock();
         char buf[1024] = {0};
         av_strerror(re,buf,sizeof(buf));
         ZLOGE("FFDemux open %s failed!",url);
@@ -36,24 +49,30 @@ bool FFDemux::Open(const char *url)
     re = avformat_find_stream_info(ic,0);
     if (re != 0 )
     {
+        mux.unlock();
         char buf[1024] = {0};
         av_strerror(re,buf, sizeof(buf));
         ZLOGE("avformat_find_stream_info %s failed!",url);
         return false;
     }
     this->totalMs =  ic->duration/(AV_TIME_BASE/1000);//不一定有
+
     ZLOGI("total ms =  %d !",totalMs);
+    mux.unlock();//提前解锁，因为下面两个也有可能加锁
 
     GetVPara();
     GetAPara();
+
     return true;
 }
 
 //读取视频参数
 ZParameter FFDemux::GetVPara()
 {
+    mux.lock();
     if (!ic)
     {
+        mux.unlock();
         ZLOGE("GetVPara  failed! ic is NULL!");
         return ZParameter();
     }
@@ -61,19 +80,22 @@ ZParameter FFDemux::GetVPara()
     int re =  av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO,-1,-1,0,0);
     if (re < 0)
     {
+        mux.unlock();
         ZLOGE("av_find_best_stream failed!");
         return ZParameter();
     }
     videoStream = re;
     ZParameter para;
     para.para = ic->streams[re]->codecpar;
-
+    mux.unlock();
     return  para;
 }
 
  ZParameter FFDemux::GetAPara(){
+     mux.lock();
      if (!ic)
      {
+         mux.unlock();
          ZLOGE("GetVPara  failed! ic is NULL!");
          return ZParameter();
      }
@@ -81,6 +103,7 @@ ZParameter FFDemux::GetVPara()
      int re =  av_find_best_stream(ic,AVMEDIA_TYPE_AUDIO,-1,-1,0,0);
      if (re < 0)
      {
+         mux.unlock();
          ZLOGE("av_find_best_stream failed!");
          return ZParameter();
      }
@@ -89,6 +112,7 @@ ZParameter FFDemux::GetVPara()
      para.para = ic->streams[re]->codecpar;
      para.channels = ic->streams[re]->codecpar->channels;
      para.sample_rate = ic->streams[re]->codecpar->sample_rate;
+     mux.unlock();
      return  para;
 
  }
@@ -98,7 +122,13 @@ ZParameter FFDemux::GetVPara()
 //读取一帧数据，数据由调用者清理
 ZData FFDemux::Read()
 {
-    if(!ic)return ZData();
+    mux.lock();
+    if(!ic)
+    {
+        mux.unlock();
+        return ZData();
+    }
+
 
     ZData d;
     AVPacket *pkt = av_packet_alloc();
@@ -107,7 +137,9 @@ ZData FFDemux::Read()
     int re = av_read_frame(ic,pkt);
     if(re != 0)
     {
+
         av_packet_free(&pkt);//释放空间
+        mux.unlock();
         return ZData();
     }
 
@@ -126,6 +158,7 @@ ZData FFDemux::Read()
     else
     {
         av_packet_free(&pkt);//释放空间
+        mux.unlock();
         return ZData();
     }
 
@@ -134,6 +167,7 @@ ZData FFDemux::Read()
     pkt->dts = pkt->dts *(1000 *r2d(ic->streams[pkt->stream_index]->time_base)) ;
     d.pts = (int)pkt->pts;
    // ZLOGE("demux pts %d",d.pts);
+    mux.unlock();
     return  d;
 
 }
