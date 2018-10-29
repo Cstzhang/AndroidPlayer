@@ -17,6 +17,7 @@ public:
     virtual ZData GetData();
     virtual bool StartPlay(ZParameter out) = 0;
     virtual void Close() =  0;
+    virtual void Clear();
     //最大缓冲
     int maxFrame = 100; //100帧
     int pts = 0;

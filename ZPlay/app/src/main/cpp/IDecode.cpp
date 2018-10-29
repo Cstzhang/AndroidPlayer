@@ -29,8 +29,20 @@ void IDecode::Update(ZData pkt)
         packsMutex.unlock();
         ZSleep(1);
     }
+}
 
+void  IDecode::Clear()
+{
 
+    packsMutex.lock();
+    while (!packs.empty())
+    {
+        packs.front().Drop();
+        packs.pop_front();
+    }
+    pts = 0;
+    synPts = 0;
+    packsMutex.unlock();
 
 }
 

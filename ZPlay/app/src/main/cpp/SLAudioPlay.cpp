@@ -78,6 +78,8 @@ static void PcmCall(SLAndroidSimpleBufferQueueItf bf,void *contex)
 //资源清理
 void SLAudioPlay::Close()
 {
+    IAudioPlay::Clear();
+
     mux.lock();
     //停止播放
     if(iplayer && (*iplayer))

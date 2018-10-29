@@ -5,6 +5,19 @@
 #include "IAudioPlay.h"
 #include "ZLog.h"
 
+
+void IAudioPlay::Clear()
+{
+    framesMutes.lock();
+
+    while (!frames.empty())
+    {
+        frames.front().Drop();
+        frames.pop_front();
+
+    }
+    framesMutes.unlock();
+}
 ZData IAudioPlay::GetData()
 {
     ZData d;
