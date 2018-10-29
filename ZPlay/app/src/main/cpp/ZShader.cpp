@@ -80,6 +80,8 @@ static const char *fragNV21 = GET_STR(
         }
 );
 
+
+
 //初始化着色器
 static GLuint InitShader(const char *code,GLint type)
 {
@@ -110,15 +112,44 @@ static GLuint InitShader(const char *code,GLint type)
     return sh;
 }
 
-
+void ZShader::Close()
+{
+    mux.lock();
+    //释放shader
+    if(program)
+    {
+        glDeleteProgram(program);
+    }
+    if(fsh)//片元
+    {
+        glDeleteShader(fsh);
+    }
+    if(vsh)//顶点
+    {
+        glDeleteShader(vsh);
+    }
+    //释放材质
+    for (int i = 0; i < sizeof(texts) / sizeof(unsigned int); ++i)
+    {
+       if(texts[i])
+       {
+           glDeleteTextures(1,&texts[i]);
+       }
+        texts[i] = 0;
+    }
+    mux.unlock();
+}
 
 bool ZShader::Init(ZShaderType type)
 {
     //顶点和片元shader初始化
     //顶点shader初始化
+    Close();
+    mux.lock();
     vsh = InitShader(vertexShader,GL_VERTEX_SHADER);
     if(vsh == 0)
     {
+        mux.unlock();
         ZLOGE("InitShader GL_VERTEX_SHADER failed!");
         return false;
     }
@@ -138,6 +169,7 @@ bool ZShader::Init(ZShaderType type)
 
             break;
         default:
+            mux.unlock();
             ZLOGE("XSHADER format is error");
             return false;
     }
@@ -145,6 +177,7 @@ bool ZShader::Init(ZShaderType type)
 
     if(fsh == 0)
     {
+        mux.unlock();
         ZLOGE("InitShader GL_FRAGMENT_SHADER failed!");
         return false;
     }
@@ -156,6 +189,7 @@ bool ZShader::Init(ZShaderType type)
     program = glCreateProgram();
     if(program == 0)
     {
+        mux.unlock();
         ZLOGE("glCreateProgram failed!");
         return false;
     }
@@ -169,6 +203,7 @@ bool ZShader::Init(ZShaderType type)
     glGetProgramiv(program,GL_LINK_STATUS,&status);
     if(status != GL_TRUE)
     {
+        mux.unlock();
         ZLOGI("glLinkProgram failed!");
         return false;
     }
@@ -215,6 +250,7 @@ bool ZShader::Init(ZShaderType type)
             glUniform1i(glGetUniformLocation(program, "uvTexture"), 1); //对于纹理第2层
             break;
     }
+    mux.unlock();
     ZLOGI("初始化Shader成功！");
 
     return true;
@@ -223,11 +259,17 @@ bool ZShader::Init(ZShaderType type)
 
 void ZShader::Draw()
 {
+    mux.lock();
     if(!program)
+    {
+        mux.unlock();
         return;
+    }
+
 
     //三维绘制
     glDrawArrays(GL_TRIANGLE_STRIP,0,4);//从0顶点开始 一共4个顶点
+    mux.unlock();
 }
 void ZShader::GetTexture(unsigned int index, int width, int height, unsigned char *buf,bool isa)
 {
@@ -235,6 +277,8 @@ void ZShader::GetTexture(unsigned int index, int width, int height, unsigned cha
     unsigned int format =GL_LUMINANCE;
     if(isa)
         format = GL_LUMINANCE_ALPHA;
+
+    mux.lock();
     if(texts[index] == 0)
     {
         //材质初始化
@@ -263,6 +307,6 @@ void ZShader::GetTexture(unsigned int index, int width, int height, unsigned cha
     glBindTexture(GL_TEXTURE_2D,texts[index]);
     //替换纹理内容
     glTexSubImage2D(GL_TEXTURE_2D,0,0,0,width,height,format,GL_UNSIGNED_BYTE,buf);
-
+    mux.unlock();
 
 }

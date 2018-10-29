@@ -4,6 +4,9 @@
 
 #ifndef ZPLAY_ZSHADER_H
 #define ZPLAY_ZSHADER_H
+
+#include <mutex>
+
 enum ZShaderType
 {
     ZSHADER_YUV420P = 0,    //软解码 虚拟机
@@ -17,6 +20,7 @@ class ZShader
 public:
     //初始化
     virtual bool Init(ZShaderType type = ZSHADER_YUV420P);
+    virtual void Close();
     //获取材质并映射到内存
     /*
      *index 材质第几层索引
@@ -29,6 +33,7 @@ protected:
     unsigned int fsh = 0;
     unsigned int program = 0;
     unsigned int texts[100] = {0};
+    std::mutex mux;
 
 };
 
