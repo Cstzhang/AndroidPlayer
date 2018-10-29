@@ -1,11 +1,15 @@
 package zplay.zplay;
-
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.SeekBar;
 
 import static zplay.zplay.PermisionUtils.verifyStoragePermissions;
 
@@ -16,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    private Button bt;
+    private SeekBar seek;
+    private Thread th;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,17 +38,30 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
+        bt  = findViewById(R.id.open_button);
+//        seek = findViewById( R.id.aplayseek );
+//        seek.setMax(1000);
+//        seek.setOnSeekBarChangeListener(this);
+
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("ZPlay","open button click");
+                //打开选择路径窗口
+                Intent intent = new Intent();
+                intent.setClass( MainActivity.this ,OpenUrl.class);
+                startActivity( intent );
+            }
+        });
+
+//        //启动播放进度线程
+//        th = new Thread(this);
+//        th.start();
 
 
-        tv.setText(stringFromJNI());
+
+
         verifyStoragePermissions(this);
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
 }

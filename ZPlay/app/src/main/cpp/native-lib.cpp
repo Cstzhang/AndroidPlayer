@@ -18,6 +18,7 @@
 //#include "IPlayer.h"
 
 #include "IPlayerProxy.h"
+#include "ZLog.h"
 
 
 
@@ -51,14 +52,15 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
 }
 
 
-extern "C" JNIEXPORT jstring
+extern "C"
+JNIEXPORT void JNICALL
+Java_zplay_zplay_OpenUrl_Open(JNIEnv *env, jobject instance, jstring url_) {
+    const char *url = env->GetStringUTFChars(url_, 0);
 
-JNICALL
-Java_zplay_zplay_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
+    // TODO
+    ZLOGI("OPEN URL %s",url);
+    IPlayerProxy::Get()->Open(url);
+    IPlayerProxy::Get()->Start();
 
-
-    return env->NewStringUTF(hello.c_str());
+    env->ReleaseStringUTFChars(url_, url);
 }

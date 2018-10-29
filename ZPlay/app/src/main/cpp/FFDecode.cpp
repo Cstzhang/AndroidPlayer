@@ -22,13 +22,10 @@ void FFDecode::InitHard(void *vm)
 void FFDecode::Close()
 {
     IDecode::Clear();
-
     mux.lock();
     pts = 0;
     if(frame)
-    {
         av_frame_free(&frame);
-    }
     if(codec)
     {
         avcodec_close(codec);

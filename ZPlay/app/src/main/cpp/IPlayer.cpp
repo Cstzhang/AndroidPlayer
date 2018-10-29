@@ -33,7 +33,7 @@ void IPlayer::Main()
         //同步
         //获取音频的pts 告诉视频
         int apts = audioPlay->pts;
-        ZLOGE(" apts %d",apts);
+//        ZLOGE(" apts %d",apts);
         vdecode->synPts = apts;
 
         mux.unlock();
