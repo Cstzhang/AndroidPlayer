@@ -16,14 +16,10 @@ public:
     virtual void Drop()
     {
         mux.lock();
-
         ZEGL::Get()->Close();
-
         sh.Close();
-
         mux.unlock();
-
-        delete this;//删除当前对象
+        delete this;
     }
 
     virtual bool Init(void *win,ZTextureType type)
@@ -31,7 +27,7 @@ public:
         mux.lock();
         ZEGL::Get()->Close();
         sh.Close();
-
+        this->type = type;
         if(!win)
         {
             mux.unlock();

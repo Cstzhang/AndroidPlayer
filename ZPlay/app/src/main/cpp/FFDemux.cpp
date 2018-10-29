@@ -32,9 +32,8 @@ bool FFDemux::Open(const char *url)
     ZLOGI("Open file %s begin",url);
     Close();
     mux.lock();
-    //打开文件
     int re = avformat_open_input(&ic,url,0,0);
-    if (re != 0 )
+    if(re != 0 )
     {
         mux.unlock();
         char buf[1024] = {0};
@@ -42,27 +41,26 @@ bool FFDemux::Open(const char *url)
         ZLOGE("FFDemux open %s failed!",url);
         return false;
     }
-
-    ZLOGI("FFDemux open %s success!",url);
+   ZLOGI("FFDemux open %s success!",url);
 
     //读取文件信息
     re = avformat_find_stream_info(ic,0);
-    if (re != 0 )
+    if(re != 0 )
     {
         mux.unlock();
         char buf[1024] = {0};
-        av_strerror(re,buf, sizeof(buf));
+        av_strerror(re,buf,sizeof(buf));
         ZLOGE("avformat_find_stream_info %s failed!",url);
         return false;
     }
-    this->totalMs =  ic->duration/(AV_TIME_BASE/1000);//不一定有
 
-    ZLOGI("total ms =  %d !",totalMs);
-    mux.unlock();//提前解锁，因为下面两个也有可能加锁
+    this->totalMs = ic->duration/(AV_TIME_BASE/1000);
+
+    mux.unlock();
+    ZLOGI("total ms = %d!",totalMs);
 
     GetVPara();
     GetAPara();
-
     return true;
 }
 
@@ -70,16 +68,14 @@ bool FFDemux::Open(const char *url)
 ZParameter FFDemux::GetVPara()
 {
     mux.lock();
-    if (!ic)
-    {
+    if (!ic) {
         mux.unlock();
-        ZLOGE("GetVPara  failed! ic is NULL!");
+        ZLOGE("GetVPara failed! ic is NULL！");
         return ZParameter();
     }
-    //获取视频流索引
-    int re =  av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO,-1,-1,0,0);
-    if (re < 0)
-    {
+    //获取了视频流索引
+    int re = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, 0, 0);
+    if (re < 0) {
         mux.unlock();
         ZLOGE("av_find_best_stream failed!");
         return ZParameter();
@@ -88,21 +84,19 @@ ZParameter FFDemux::GetVPara()
     ZParameter para;
     para.para = ic->streams[re]->codecpar;
     mux.unlock();
-    return  para;
+    return para;
 }
 
  ZParameter FFDemux::GetAPara(){
      mux.lock();
-     if (!ic)
-     {
+     if (!ic) {
          mux.unlock();
-         ZLOGE("GetVPara  failed! ic is NULL!");
+         ZLOGE("GetVPara failed! ic is NULL！");
          return ZParameter();
      }
-     //获取音频流索引
-     int re =  av_find_best_stream(ic,AVMEDIA_TYPE_AUDIO,-1,-1,0,0);
-     if (re < 0)
-     {
+     //获取了音频流索引
+     int re = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, 0, 0);
+     if (re < 0) {
          mux.unlock();
          ZLOGE("av_find_best_stream failed!");
          return ZParameter();
@@ -113,7 +107,7 @@ ZParameter FFDemux::GetVPara()
      para.channels = ic->streams[re]->codecpar->channels;
      para.sample_rate = ic->streams[re]->codecpar->sample_rate;
      mux.unlock();
-     return  para;
+     return para;
 
  }
 
@@ -129,68 +123,59 @@ ZData FFDemux::Read()
         return ZData();
     }
 
-
     ZData d;
     AVPacket *pkt = av_packet_alloc();
-
-    //读取
     int re = av_read_frame(ic,pkt);
     if(re != 0)
     {
-
-        av_packet_free(&pkt);//释放空间
         mux.unlock();
+        av_packet_free(&pkt);
         return ZData();
     }
-
-   // ZLOGI("packet size=%d pts= %lld",pkt->size,pkt->pts);
+    //XLOGI("pack size is %d ptss %lld",pkt->size,pkt->pts);
     d.data = (unsigned char*)pkt;
     d.size = pkt->size;
-
-    if (pkt->stream_index == audioStream)
+    if(pkt->stream_index == audioStream)
     {
         d.isAudio = true;
     }
-    else if (pkt->stream_index == videoStream)
+    else if(pkt->stream_index == videoStream)
     {
         d.isAudio = false;
     }
     else
     {
-        av_packet_free(&pkt);//释放空间
         mux.unlock();
+        av_packet_free(&pkt);
         return ZData();
     }
 
     //转换pts
-    pkt->pts = pkt->pts *(1000 *r2d(ic->streams[pkt->stream_index]->time_base)) ;
-    pkt->dts = pkt->dts *(1000 *r2d(ic->streams[pkt->stream_index]->time_base)) ;
+    pkt->pts = pkt->pts * (1000*r2d(ic->streams[pkt->stream_index]->time_base));
+    pkt->dts = pkt->dts * (1000*r2d(ic->streams[pkt->stream_index]->time_base));
     d.pts = (int)pkt->pts;
-   // ZLOGE("demux pts %d",d.pts);
+    //XLOGE("demux pts %d",d.pts);
     mux.unlock();
-    return  d;
+    return d;
 
 }
 
 //初始化
 FFDemux::FFDemux()
 {
-    static bool isFirst = true;//非线程安全
-    if (isFirst)
+    static bool isFirst = true;
+    if(isFirst)
     {
-        isFirst = false;//初始化
+        isFirst = false;
         //注册所有封装器
-//        av_register_all();
-        //注册所有解码器
-//        avcodec_register_all();
+        av_register_all();
+
+        //注册所有的解码器
+        avcodec_register_all();
+
         //初始化网络
-//        avformat_network_init();
-
-        ZLOGI("register FFmpeg ");
-
+        avformat_network_init();
+        ZLOGI("register ffmpeg!");
     }
-
-
-
 
 }

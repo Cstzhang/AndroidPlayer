@@ -106,6 +106,13 @@ void SLAudioPlay::Close()
     {
         (*engineSL)->Destroy(engineSL);
     }
+
+    engineSL = NULL;
+    eng = NULL;
+    mix = NULL;
+    player = NULL;
+    iplayer = NULL;
+    pcmQue = NULL;
     mux.unlock();
 }
 
@@ -200,8 +207,10 @@ bool SLAudioPlay::StartPlay(ZParameter out)
 
     //启动队列回调
     (*pcmQue)->Enqueue(pcmQue,"",1);
-    ZLOGI("SLAudioPlay::StartPlay success!");
+    isExit = false;
     mux.unlock();
+    ZLOGI("SLAudioPlay::StartPlay success!");
+
     return true;
 
 }

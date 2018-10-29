@@ -11,6 +11,8 @@ import javax.microedition.khronos.opengles.GL10;
 public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback,GLSurfaceView.Renderer {
     public ZPlay(Context context, AttributeSet attrs) {
         super(context, attrs);
+        //Android 8.0 需要
+        setRenderer(this);
     }
 
    @Override
@@ -19,8 +21,7 @@ public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback,GLSur
        //初始化opengl egl显示
        InitView(holder.getSurface());
 
-       //Android 8.0 需要
-       setRenderer(this);
+
 
        //只有在绘制数据改变时才绘制view，可以防止GLSurfaceView帧重绘
        //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

@@ -39,6 +39,7 @@ bool FFDecode::Open(ZParameter para , bool isHard)
     Close();
     if(!para.para) return false;
     AVCodecParameters *p = para.para;
+
     //1 查找解码器
     AVCodec *cd = avcodec_find_decoder(p->codec_id);
     if(isHard)
@@ -52,6 +53,7 @@ bool FFDecode::Open(ZParameter para , bool isHard)
         return false;
     }
     ZLOGI("avcodec_find_decoder success %d!",isHard);
+
     mux.lock();
     //2 创建解码上下文，并复制参数
     codec = avcodec_alloc_context3(cd);
@@ -134,8 +136,8 @@ ZData FFDecode::RecvFrame()
         d.size = av_get_bytes_per_sample((AVSampleFormat)frame->format)*frame->nb_samples*2;
     }
     d.format = frame->format;
-    if(!isAudio)
-       // ZLOGE("data format is %d",frame->format);
+    //if(!isAudio)
+    //    XLOGE("data format is %d",frame->format);
     memcpy(d.datas,frame->data,sizeof(d.datas));
     d.pts = frame->pts;
     pts = d.pts;

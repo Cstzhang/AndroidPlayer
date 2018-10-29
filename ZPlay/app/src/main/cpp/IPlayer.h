@@ -40,7 +40,7 @@ protected:
 
     void Main(); //用作音视频同步
     std::mutex mux;
-    IPlayer();
+    IPlayer(){};
 
 };
 

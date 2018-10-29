@@ -129,12 +129,12 @@ void ZShader::Close()
         glDeleteShader(vsh);
     }
     //释放材质
-    for (int i = 0; i < sizeof(texts) / sizeof(unsigned int); ++i)
+    for(int i = 0; i < sizeof(texts)/sizeof(unsigned int); i++)
     {
-       if(texts[i])
-       {
-           glDeleteTextures(1,&texts[i]);
-       }
+        if(texts[i])
+        {
+            glDeleteTextures(1,&texts[i]);
+        }
         texts[i] = 0;
     }
     mux.unlock();

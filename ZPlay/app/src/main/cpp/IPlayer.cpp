@@ -33,7 +33,7 @@ void IPlayer::Main()
         //同步
         //获取音频的pts 告诉视频
         int apts = audioPlay->pts;
-//        ZLOGE(" apts %d",apts);
+       // ZLOGE(" apts %d",apts);
         vdecode->synPts = apts;
 
         mux.unlock();
@@ -167,16 +167,28 @@ bool IPlayer::Start()
         adecode->Start();
     }
 
-
-
     if(!demux || !demux->Start())
     {
         mux.unlock();
         ZLOGE("demux->Start failed! ");
         return false;
     }
-
-
+//
+//    if(vdecode)
+//        vdecode->Start();
+//
+//
+//
+//    if(!demux || !demux->Start())
+//    {
+//        mux.unlock();
+//        ZLOGE("demux->Start failed!");
+//        return false;
+//    }
+//    if(adecode)
+//        adecode->Start();
+//    if(audioPlay)
+//        audioPlay->StartPlay(outPara);
 
 
     ZThread::Start();
@@ -189,6 +201,7 @@ void IPlayer::InitView(void *win)
 {
     if(videoView)
     {
+        videoView->Close();
         videoView->SetRender(win);
     }
 
@@ -196,7 +209,3 @@ void IPlayer::InitView(void *win)
 
 
 
-IPlayer::IPlayer()
-{
-
-}

@@ -44,7 +44,6 @@ public class OpenUrl extends AppCompatActivity {
                         EditText t = findViewById( R.id.rtmpurl );
                         //用户输入的URL，打开视频
                         Open(t.getText().toString());
-
                         //关闭当前窗口
                         finish();
                     }

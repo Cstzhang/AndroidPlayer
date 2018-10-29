@@ -18,7 +18,7 @@
 //#include "IPlayer.h"
 
 #include "IPlayerProxy.h"
-#include "ZLog.h"
+//#include "ZLog.h"
 
 
 
@@ -30,8 +30,8 @@ jint JNI_OnLoad(JavaVM *vm ,void *res)
 
     IPlayerProxy::Get()->Init(vm);
 
-    IPlayerProxy::Get()->Open("/sdcard/1080.mp4");
-    IPlayerProxy::Get()->Start();
+//    IPlayerProxy::Get()->Open("/sdcard/1080.mp4");
+//    IPlayerProxy::Get()->Start();
 //    ZSleep(500);
 //    IPlayerProxy::Get()->Close();
 //    IPlayerProxy::Get()->Open("/sdcard/1080v.mp4");
@@ -55,10 +55,11 @@ Java_zplay_zplay_ZPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
 extern "C"
 JNIEXPORT void JNICALL
 Java_zplay_zplay_OpenUrl_Open(JNIEnv *env, jobject instance, jstring url_) {
+
     const char *url = env->GetStringUTFChars(url_, 0);
 
     // TODO
-    ZLOGI("OPEN URL %s",url);
+//    ZLOGI("OPEN URL %s",url);
     IPlayerProxy::Get()->Open(url);
     IPlayerProxy::Get()->Start();
 
