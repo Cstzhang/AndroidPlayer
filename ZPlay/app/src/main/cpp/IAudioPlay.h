@@ -16,6 +16,7 @@ public:
     //获取缓冲数据，如果没有则阻塞
     virtual ZData GetData();
     virtual bool StartPlay(ZParameter out) = 0;
+    virtual void Close() =  0;
     //最大缓冲
     int maxFrame = 100; //100帧
     int pts = 0;
