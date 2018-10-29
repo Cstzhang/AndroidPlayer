@@ -16,11 +16,12 @@ class GLVideoView:public IVideoView
 public:
     virtual void SetRender(void *win);
     virtual void Render(ZData data);
-
+    virtual void Close();
 protected:
     //显示窗体
     void *view = 0;
     ZTexture *txt = 0;
+    std::mutex mux;
 };
 
 

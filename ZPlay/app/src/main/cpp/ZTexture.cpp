@@ -12,22 +12,48 @@ class CZTexture:public ZTexture
 public:
     ZShader sh;
     ZTextureType type;
+    std::mutex mux;
+    virtual void Drop()
+    {
+        mux.lock();
+
+        ZEGL::Get()->Close();
+
+        sh.Close();
+
+        mux.unlock();
+
+        delete this;//删除当前对象
+    }
+
     virtual bool Init(void *win,ZTextureType type)
     {
+        mux.lock();
+        ZEGL::Get()->Close();
+        sh.Close();
+
         if(!win)
         {
+            mux.unlock();
             ZLOGE("ZTexture init failed win is NULL");
             return false;
         }
         //初始化EGL
-        if(!ZEGL::Get()->Init(win))return false;
+        if(!ZEGL::Get()->Init(win))
+        {
+            mux.unlock();
+            return false;
+        }
+
 
         //初始化shader
         sh.Init((ZShaderType)type);
+        mux.unlock();
         return true;
     }
     virtual void Draw(unsigned char *data[],int width,int height)
     {
+        mux.lock();
         sh.GetTexture(0,width,height,data[0]);  // Y
 
         if(type == ZTEXTURE_YUV420P)
@@ -43,6 +69,7 @@ public:
         }
         sh.Draw();
         ZEGL::Get()->Draw();
+        mux.unlock();
     }
 
 };

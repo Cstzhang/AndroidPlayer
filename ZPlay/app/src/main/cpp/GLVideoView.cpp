@@ -9,6 +9,19 @@ void  GLVideoView::SetRender(void *win)
 {
     view = win;
 }
+void  GLVideoView::Close()
+{
+    mux.lock();
+
+    if(txt)
+    {
+        txt->Drop();
+        txt = 0;
+    }
+
+    mux.unlock();
+}
+
 void  GLVideoView::Render(ZData data)
 {
     if(!view)return;
@@ -19,6 +32,5 @@ void  GLVideoView::Render(ZData data)
         txt->Init(view,(ZTextureType)data.format);
     }
     txt->Draw(data.datas,data.width,data.height);
-
 
 }

@@ -16,7 +16,7 @@ public:
     virtual void SetRender(void *win) = 0;
     virtual void Render(ZData data) = 0;
     virtual void Update(ZData data);
-
+    virtual void Close() = 0;
 
 };
 
