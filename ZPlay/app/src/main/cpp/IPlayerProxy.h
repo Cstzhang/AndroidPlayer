@@ -24,7 +24,10 @@ public:
     virtual void Close();
     virtual bool Start();
     virtual void InitView(void *win);
-
+    virtual double PlayPos();
+    virtual bool Seek(double pos);
+    virtual void SetPause(bool isP);
+    virtual bool IsPause();
 protected:
     IPlayerProxy(){};
     IPlayer *player = 0;

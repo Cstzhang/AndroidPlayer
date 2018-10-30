@@ -22,9 +22,21 @@ public:
     //入口主函数
     virtual void Main(){}
 
+    virtual  bool IsPause()
+    {
+        isPausing = isPause;
+        return isPause;
+    }
+
+    virtual void SetPause(bool isP);
+
+
+
 protected:
     bool isExit = false;
     bool isRunning = false;
+    bool isPause = false;
+    bool isPausing = false;
 
 
 private:

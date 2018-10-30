@@ -65,6 +65,11 @@ void IPlayer::Close()
         adecode->Stop();
     }
 
+    if(audioPlay)
+    {
+        audioPlay->Stop();
+    }
+
 
     //2 清理缓冲队列
     if(vdecode)
@@ -112,6 +117,66 @@ void IPlayer::Close()
     mux.unlock();
 }
 
+double IPlayer::PlayPos()
+{
+
+    double pos = 0.0;
+    mux.lock();
+    int total = 0;
+    if(demux)
+        total = demux->totalMs;
+    if(total>0)
+    {
+        if(vdecode)
+        {
+            pos = (double)vdecode->pts/(double)total;
+        }
+    }
+    mux.unlock();
+//    ZLOGE("pos   %lld",vdecode->pts/total);
+    return pos;
+}
+
+void IPlayer::SetPause(bool isP)
+{
+    mux.lock();
+     ZThread::SetPause(isP);
+    if(demux)
+    {
+        demux->SetPause(isP);
+    }
+    if(vdecode)
+    {
+        vdecode->SetPause(isP);
+    }
+    if(adecode)
+    {
+        adecode->SetPause(isP);
+    }
+    if(audioPlay)
+    {
+        audioPlay->SetPause(isP);
+    }
+    mux.unlock();
+
+}
+
+bool IPlayer::Seek(double pos)
+{
+    bool re = false;
+    mux.lock();
+    //暂停所有线程
+
+
+
+    if(demux)
+    {
+        re = demux->Seek(pos);
+    }
+    mux.unlock();
+    return  re;
+
+}
 
 bool IPlayer::Open(const char *path)
 {
@@ -137,10 +202,11 @@ bool IPlayer::Open(const char *path)
         //return false;
     }
     //重采样 有可能不需要 解码后或者解封装后可之别播放
-    if(outPara.sample_rate <=0)
-    {
-        outPara = demux->GetAPara();
-    }
+    outPara = demux->GetAPara();
+//    if(outPara.sample_rate <=0)
+//    {
+
+//    }
     if(!resample || !resample->Open(demux->GetAPara(),outPara))
     {
         ZLOGE("resample->Open failed! %s",path);

@@ -13,7 +13,7 @@ import android.widget.SeekBar;
 
 import static zplay.zplay.PermisionUtils.verifyStoragePermissions;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Runnable,SeekBar.OnSeekBarChangeListener {
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         //去掉标题
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         //全屏.隐藏状态
@@ -39,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bt  = findViewById(R.id.open_button);
-//        seek = findViewById( R.id.aplayseek );
-//        seek.setMax(1000);
-//        seek.setOnSeekBarChangeListener(this);
+        seek = findViewById( R.id.aplayseek );
+        seek.setMax(1000);
+        seek.setOnSeekBarChangeListener(this);
 
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,14 +55,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        //启动播放进度线程
-//        th = new Thread(this);
-//        th.start();
 
+        //启动播放进度线程
+        th = new Thread(this);
+        th.start();
 
 
 
         verifyStoragePermissions(this);
     }
+    //播放精度显示
+    @Override
+    public void run() {
+        for (;;)
+        {
+            seek.setProgress((int)(PlayPos()*1000));
+            try {
+                Thread.sleep( 40 );
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    public native double PlayPos();
+    public native void Seek(double pos);
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        Seek( (double)seekBar.getProgress()/(double)seekBar.getMax() );
+    }
 }

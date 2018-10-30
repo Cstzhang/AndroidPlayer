@@ -21,8 +21,14 @@ void IAudioPlay::Clear()
 ZData IAudioPlay::GetData()
 {
     ZData d;
+    isRunning = true;
     while(!isExit)
     {
+        if(IsPause())
+        {
+            ZSleep(2);
+            continue;
+        }
         framesMutes.lock();
         if(!frames.empty())
         {
@@ -38,6 +44,7 @@ ZData IAudioPlay::GetData()
         ZSleep(1);
     }
 
+    isRunning = false;
     //未获取数据
     return d;
 }

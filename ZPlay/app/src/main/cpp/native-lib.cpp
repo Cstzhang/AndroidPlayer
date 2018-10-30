@@ -64,4 +64,24 @@ Java_zplay_zplay_OpenUrl_Open(JNIEnv *env, jobject instance, jstring url_) {
     IPlayerProxy::Get()->Start();
 
     env->ReleaseStringUTFChars(url_, url);
+}extern "C"
+JNIEXPORT jdouble JNICALL
+Java_zplay_zplay_MainActivity_PlayPos(JNIEnv *env, jobject instance) {
+
+    // TODO
+    return IPlayerProxy::Get()->PlayPos();
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_zplay_zplay_MainActivity_Seek(JNIEnv *env, jobject instance, jdouble pos) {
+
+    // TODO
+
+    IPlayerProxy::Get()->Seek(pos);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_zplay_zplay_ZPlay_playOrPause(JNIEnv *env, jobject instance) {
+
+    IPlayerProxy::Get()->SetPause(!IPlayerProxy::Get()->IsPause());
+
 }

@@ -4,15 +4,17 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback,GLSurfaceView.Renderer {
+public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback,GLSurfaceView.Renderer , View.OnClickListener{
     public ZPlay(Context context, AttributeSet attrs) {
         super(context, attrs);
         //Android 8.0 需要
         setRenderer(this);
+        setOnClickListener(this);
     }
 
    @Override
@@ -60,4 +62,9 @@ public class ZPlay extends GLSurfaceView implements SurfaceHolder.Callback,GLSur
     }
 
 
+    @Override
+    public void onClick(View v) {
+        playOrPause();
+    }
+    public native void  playOrPause();
 }

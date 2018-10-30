@@ -14,11 +14,27 @@ void ZSleep(int mis)
 }
 
 
+void ZThread::SetPause(bool isP)
+{
+    isPause = isP;
+    //等待100毫秒
+    for(int i = 0; i < 10; i++)
+    {
+        if(isPausing == isP)
+        {
+            break;
+        }
+        ZSleep(10);
+    }
+
+}
+
 //启动线程
 bool ZThread::Start()
 {
 
     isExit = false;
+    isPause = false;
 
     thread th(&ZThread::ThreadMain,this);
 
